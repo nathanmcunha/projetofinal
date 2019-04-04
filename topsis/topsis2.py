@@ -17,13 +17,18 @@ class TopSis:
         except IOError:
             print("Problemas para abrir o arquivo")
             raise IOError
-        if self.is_soma_pesos_equal_um(self.data[0, :]):
+            self.pesos = cls.get_pesos(self.data)
+        if self.is_soma_pesos_equal_um(self.pesos):
             print('ERROR: the sum of the weights must be 1')
             raise ValueError
 
         self.matriz_decisao = self.get_matriz_decisao(self.data)
         self.size = self.matriz_decisao.shape
         [self.num_alternativas, self.num_criterios] = self.size
+
+    @classmethod
+    def get_pesos(cls, data):
+        return data[0, :]
 
     @classmethod
     def is_soma_pesos_equal_um(cls, pesos):
@@ -49,3 +54,7 @@ class TopSis:
                 normalizada[i, j] = matriz_decisao[i, j] / m[j]
         return normalizada
 
+    @classmethod
+    def introduz_pesos(cls, normalizada, pesos):
+        ponderada = normalizada * pesos
+        return ponderada
