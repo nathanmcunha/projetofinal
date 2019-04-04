@@ -1,14 +1,11 @@
-from __future__ import print_function
-from __future__ import division
 from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import numpy as np
-from numpy.core._multiarray_umath import ndarray
 
 
 class TopSis:
-    matriz_decisao = ndarray
-    data = ndarray
 
     def __init__(self, file):
         self.file = file
@@ -22,6 +19,7 @@ class TopSis:
             print('ERROR: the sum of the weights must be 1')
             raise ValueError
 
+        self.custo_ou_beneficio = get_custo_ou_beneficio(self.data)
         self.matriz_decisao = self.get_matriz_decisao(self.data)
         self.size = self.matriz_decisao.shape
         [self.num_alternativas, self.num_criterios] = self.size
@@ -37,8 +35,8 @@ class TopSis:
         return True
 
     @classmethod
-    def get_custo_ou_beneficio(cls):
-        return cls.data[1, :].astype(int)
+    def get_custo_ou_beneficio(cls, data):
+        return data[1, :].astype(int)
 
     @classmethod
     def get_matriz_decisao(cls, data):
@@ -56,5 +54,21 @@ class TopSis:
 
     @classmethod
     def introduz_pesos(cls, normalizada, pesos):
-        ponderada = normalizada * pesos
-        return ponderada
+        normalizada_com_pesos = normalizada * pesos
+        return normalizada_com_pesos
+
+    @classmethod
+    def get_solucoes_ideais(cls, num_criterios, max, min, custo_ou_beneficio, size):
+        ideal_positiva = np.zeros(num_criterios, dtype=float)
+        ideal_negativa = np.zeros(num_criterios, dtype=float)
+        for j in range(num_criterios):
+            if custo_ou_beneficio[j] == 1:
+                ideal_positiva[j] = min[j]
+                ideal_negativa[j] = max[j]
+            elif custo_ou_beneficio == 0:
+                ideal_positiva[j] = max[j]
+                ideal_negativa[j] = min[j]
+            else:
+                print('ERROR: O valor dos pesos deve ser 1 OU 0')
+                raise ValueError
+            return ideal_positiva, ideal_negativa
