@@ -20,8 +20,9 @@ class MyTestCase(unittest.TestCase):
         np.testing.assert_allclose(self.mock_matrix_normalizada_esperada(), matriz_normalizada)
 
     def test_introduz_pesos(self):
-        np.testing.assert_allclose(TopSis.introduz_pesos(self.mock_matrix_normalizada_esperada(), self.mock_pesos()),
-                                   self.mock_matriz_esperada_com_pesos(), atol=1)
+        normalizada_com_pesos = TopSis.introduz_pesos(self.mock_matrix_normalizada_esperada(), self.mock_pesos()).round(7)
+        normalizada_esperada_com_pesos = self.mock_matriz_esperada_com_pesos().round(7)
+        np.testing.assert_equal(normalizada_esperada_com_pesos, normalizada_com_pesos)
 
     def test_get_solucoes_ideais(self):
         matriz_decisao, num_alternativas, num_criterios, size = self.mock_topsis()
@@ -32,16 +33,26 @@ class MyTestCase(unittest.TestCase):
         min = self.mock_matriz_esperada_com_pesos().min(axis=0)
 
         solucoes_ideal_pos, solucoes_ideal_neg = TopSis.get_solucoes_ideais \
-            (num_criterios, max, min, self.mock_custo_ou_beneficio(), size)
+            (num_criterios, max, min, self.mock_custo_ou_beneficio())
 
-        np.testing.assert_allclose(solucoes_ideal_pos, ideal_positivo_esperado)
-        np.testing.assert_allclose(solucoes_ideal_neg, ideal_negativo_esperado)
+        np.testing.assert_equal(solucoes_ideal_pos.round(5), ideal_positivo_esperado.round(5))
+        np.testing.assert_equal(solucoes_ideal_neg.round(5), ideal_negativo_esperado.round(5))
+
+    def test_distancia_euclidiana(self):
+        self.mock_diferenca_positiva_esperada()
+        self.mock_diferenca_negativa_esperada()
 
         if __name__ == '__main__':
             unittest.main()
 
+    def mock_diferenca_negativa_esperada(self):
+        return np.asarray([0.25780135, 0.17686323, 0.07034498])
+
+    def mock_diferenca_positiva_esperada(self):
+        return np.asarray([0.07034498, 0.09070766, 0.25780135])
+
     def mock_ideal_negativo_esperado(self):
-        return  np.asarray([0.20779069, 0.02328452, 0.47263582, 0.0274986])
+        return np.asarray([0.20779069, 0.02328452, 0.47263582, 0.0274986])
 
     def mock_ideal_positivo_esperado(self):
         return np.asarray([0.13852713, 0.03492677, 0.21483446, 0.03142697])

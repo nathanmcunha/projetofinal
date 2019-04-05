@@ -53,22 +53,26 @@ class TopSis:
         return normalizada
 
     @classmethod
-    def introduz_pesos(cls, normalizada, pesos):
+    def introduz_pesos(cls, normalizada, pesos) :
         normalizada_com_pesos = normalizada * pesos
-        return normalizada_com_pesos
+        return np.asarray(normalizada_com_pesos)
 
     @classmethod
-    def get_solucoes_ideais(cls, num_criterios, max, min, custo_ou_beneficio, size):
+    def get_solucoes_ideais(cls, num_criterios, max, min, custo_ou_beneficio):
         ideal_positiva = np.zeros(num_criterios, dtype=float)
         ideal_negativa = np.zeros(num_criterios, dtype=float)
+
         for j in range(num_criterios):
             if custo_ou_beneficio[j] == 1:
                 ideal_positiva[j] = min[j]
                 ideal_negativa[j] = max[j]
-            elif custo_ou_beneficio == 0:
+            elif custo_ou_beneficio[j] == 0:
                 ideal_positiva[j] = max[j]
                 ideal_negativa[j] = min[j]
             else:
                 print('ERROR: O valor dos pesos deve ser 1 OU 0')
                 raise ValueError
-            return ideal_positiva, ideal_negativa
+        return ideal_positiva, ideal_negativa
+    @classmethod
+    def calcula_distancia_euclidiana(cls):
+        pass
